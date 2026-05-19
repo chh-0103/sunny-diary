@@ -16,7 +16,7 @@ function ScrollToTop() {
 
 export default function App() {
   return (
-    <Router>
+    <Router basename="/sunny-diary">
       <ScrollToTop />
       <Routes>
         <Route path="/" element={<TimelinePage />} />
