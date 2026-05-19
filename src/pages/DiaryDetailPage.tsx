@@ -24,7 +24,6 @@ export default function DiaryDetailPage() {
   const { user, signOut } = useAuth();
 
   const [entry, setEntry] = useState<DiaryEntry | null>(null);
-  const [supplements, setSupplements] = useState<DiarySupplement[]>([]);
   const [supplementText, setSupplementText] = useState('');
   const [adding, setAdding] = useState(false);
   const [viewerImage, setViewerImage] = useState<string | null>(null);
@@ -34,15 +33,11 @@ export default function DiaryDetailPage() {
     if (entries.length === 0) {
       loadEntries().then(() => {
         const found = useDiaryStore.getState().entries.find(e => e.id === id);
-        if (found) {
-          setEntry(found);
-          setSupplements(found.supplements || []);
-        }
+        if (found) setEntry(found);
       });
     } else {
       const found = entries.find(e => e.id === id);
       setEntry(found || null);
-      if (found) setSupplements(found.supplements || []);
     }
   }, [id, entries, loadEntries]);
 
@@ -57,7 +52,6 @@ export default function DiaryDetailPage() {
     };
 
     await addSupplement(id, supplement);
-    setSupplements(prev => [...prev, supplement]);
     setSupplementText('');
     setAdding(false);
   }, [id, supplementText, adding, addSupplement]);
@@ -65,7 +59,6 @@ export default function DiaryDetailPage() {
   const handleDeleteSupplement = async (supplementId: string) => {
     if (!id) return;
     await deleteSupplement(id, supplementId);
-    setSupplements(prev => prev.filter(s => s.id !== supplementId));
   };
 
   const handleDeleteEntry = async () => {
@@ -177,13 +170,13 @@ export default function DiaryDetailPage() {
         </p>
       </div>
 
-      {supplements.length > 0 && (
+      {entry.supplements && entry.supplements.length > 0 && (
         <div className="space-y-3 mb-8">
           <h3 className="text-sm font-medium text-text-muted flex items-center gap-2">
             <span className="w-1.5 h-1.5 rounded-full bg-warmbrown" />
             后来补充的想法
           </h3>
-          {supplements.map((s) => (
+          {entry.supplements.map((s) => (
             <div key={s.id} className="supplement-block group">
               <div className="flex items-start justify-between gap-2">
                 <p className="text-text-soft text-sm leading-relaxed whitespace-pre-wrap flex-1">
