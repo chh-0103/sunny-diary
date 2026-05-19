@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Send, Camera, Trash2, LogOut } from 'lucide-react';
 import { useDiaryStore } from '@/store';
@@ -26,6 +26,7 @@ export default function DiaryDetailPage() {
   const [entry, setEntry] = useState<DiaryEntry | null>(null);
   const [supplementText, setSupplementText] = useState('');
   const [adding, setAdding] = useState(false);
+  const addingRef = useRef(false);
   const [viewerImage, setViewerImage] = useState<string | null>(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
@@ -42,7 +43,8 @@ export default function DiaryDetailPage() {
   }, [id, entries, loadEntries]);
 
   const handleAddSupplement = useCallback(async () => {
-    if (!id || !supplementText.trim() || adding) return;
+    if (!id || !supplementText.trim() || addingRef.current) return;
+    addingRef.current = true;
     setAdding(true);
 
     const supplement: DiarySupplement = {
@@ -54,7 +56,8 @@ export default function DiaryDetailPage() {
     await addSupplement(id, supplement);
     setSupplementText('');
     setAdding(false);
-  }, [id, supplementText, adding, addSupplement]);
+    addingRef.current = false;
+  }, [id, supplementText, addSupplement]);
 
   const handleDeleteSupplement = async (supplementId: string) => {
     if (!id) return;
