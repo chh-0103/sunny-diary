@@ -36,9 +36,12 @@ export const useDiaryStore = create<DiaryState>((set, get) => ({
   },
 
   addEntry: async (entry) => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+
     const { data } = await supabase
       .from('diaries')
-      .insert({ ...entry, supplements: [] })
+      .insert({ ...entry, user_id: user.id, supplements: [] })
       .select()
       .single();
 
