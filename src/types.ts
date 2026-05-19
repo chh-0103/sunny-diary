@@ -4,19 +4,20 @@ export type WeatherType = 'sunny' | 'cloudy' | 'rainy' | 'snowy' | 'windy' | 'fo
 
 export interface DiaryEntry {
   id: string;
+  user_id: string;
   content: string;
   mood: MoodType;
   weather: WeatherType;
   images: string[];
-  createdAt: string;
-  updatedAt: string;
+  supplements: DiarySupplement[];
+  created_at: string;
+  updated_at: string;
 }
 
 export interface DiarySupplement {
   id: string;
-  diaryId: string;
   content: string;
-  createdAt: string;
+  created_at: string;
 }
 
 export const MOOD_CONFIG: Record<MoodType, { emoji: string; label: string; color: string }> = {

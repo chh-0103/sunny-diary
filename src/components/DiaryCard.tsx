@@ -37,7 +37,7 @@ export default function DiaryCard({ entry, index }: DiaryCardProps) {
           <span className="text-2xl">{moodCfg.emoji}</span>
           <span className="text-2xl">{weatherCfg.emoji}</span>
         </div>
-        <span className="text-xs text-text-muted">{formatTime(entry.createdAt)}</span>
+        <span className="text-xs text-text-muted">{formatTime(entry.created_at)}</span>
       </div>
 
       {entry.images.length > 0 && (

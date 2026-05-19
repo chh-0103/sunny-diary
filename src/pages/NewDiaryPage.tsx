@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, LogOut } from 'lucide-react';
 import { useDiaryStore } from '@/store';
+import { useAuth } from '@/contexts/AuthContext';
 import MoodSelector from '@/components/MoodSelector';
 import WeatherSelector from '@/components/WeatherSelector';
 import ImageUploader from '@/components/ImageUploader';
@@ -10,6 +11,7 @@ import type { MoodType, WeatherType } from '@/types';
 export default function NewDiaryPage() {
   const navigate = useNavigate();
   const addEntry = useDiaryStore(s => s.addEntry);
+  const { user, signOut } = useAuth();
 
   const [mood, setMood] = useState<MoodType | null>(null);
   const [weather, setWeather] = useState<WeatherType | null>(null);
@@ -23,17 +25,11 @@ export default function NewDiaryPage() {
     if (!canSave || !mood || !weather) return;
     setSaving(true);
 
-    const now = new Date().toISOString();
-    const id = Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
-
     await addEntry({
-      id,
       content: content.trim(),
       mood,
       weather,
       images,
-      createdAt: now,
-      updatedAt: now,
     });
 
     setSaving(false);
@@ -42,7 +38,7 @@ export default function NewDiaryPage() {
 
   return (
     <div className="page-container animate-fade-in">
-      <div className="flex items-center gap-3 mb-6">
+      <div className="flex items-center justify-between mb-6">
         <button
           onClick={() => navigate(-1)}
           className="w-10 h-10 rounded-full bg-white/80 border border-apricot/50
@@ -51,6 +47,17 @@ export default function NewDiaryPage() {
           <ArrowLeft size={20} className="text-text-soft" />
         </button>
         <h1 className="font-handwriting text-2xl text-warmbrown">新日记</h1>
+        <div className="flex items-center gap-2">
+          <span className="text-xs text-text-muted hidden sm:block">{user?.email}</span>
+          <button
+            onClick={() => { signOut(); navigate('/login'); }}
+            className="w-8 h-8 rounded-full bg-white/80 border border-apricot/50
+                       flex items-center justify-center hover:bg-apricot/20 transition-colors"
+            title="退出登录"
+          >
+            <LogOut size={14} className="text-text-muted" />
+          </button>
+        </div>
       </div>
 
       <div className="space-y-5">

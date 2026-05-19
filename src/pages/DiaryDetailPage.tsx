@@ -1,7 +1,8 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Send, Camera, Trash2 } from 'lucide-react';
+import { ArrowLeft, Send, Camera, Trash2, LogOut } from 'lucide-react';
 import { useDiaryStore } from '@/store';
+import { useAuth } from '@/contexts/AuthContext';
 import { MOOD_CONFIG, WEATHER_CONFIG } from '@/types';
 import ImageViewer from '@/components/ImageViewer';
 import type { DiaryEntry, DiarySupplement } from '@/types';
@@ -19,7 +20,8 @@ function formatDateTime(iso: string): string {
 export default function DiaryDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { entries, loadEntries, getSupplements, addSupplement, deleteSupplement, deleteEntry } = useDiaryStore();
+  const { entries, loadEntries, addSupplement, deleteSupplement, deleteEntry } = useDiaryStore();
+  const { user, signOut } = useAuth();
 
   const [entry, setEntry] = useState<DiaryEntry | null>(null);
   const [supplements, setSupplements] = useState<DiarySupplement[]>([]);
@@ -32,19 +34,17 @@ export default function DiaryDetailPage() {
     if (entries.length === 0) {
       loadEntries().then(() => {
         const found = useDiaryStore.getState().entries.find(e => e.id === id);
-        if (found) setEntry(found);
+        if (found) {
+          setEntry(found);
+          setSupplements(found.supplements || []);
+        }
       });
     } else {
       const found = entries.find(e => e.id === id);
       setEntry(found || null);
+      if (found) setSupplements(found.supplements || []);
     }
   }, [id, entries, loadEntries]);
-
-  useEffect(() => {
-    if (id) {
-      getSupplements(id).then(setSupplements);
-    }
-  }, [id, getSupplements]);
 
   const handleAddSupplement = useCallback(async () => {
     if (!id || !supplementText.trim() || adding) return;
@@ -52,19 +52,19 @@ export default function DiaryDetailPage() {
 
     const supplement: DiarySupplement = {
       id: Date.now().toString(36) + Math.random().toString(36).slice(2, 8),
-      diaryId: id,
       content: supplementText.trim(),
-      createdAt: new Date().toISOString(),
+      created_at: new Date().toISOString(),
     };
 
-    await addSupplement(supplement);
+    await addSupplement(id, supplement);
     setSupplements(prev => [...prev, supplement]);
     setSupplementText('');
     setAdding(false);
   }, [id, supplementText, adding, addSupplement]);
 
   const handleDeleteSupplement = async (supplementId: string) => {
-    await deleteSupplement(supplementId);
+    if (!id) return;
+    await deleteSupplement(id, supplementId);
     setSupplements(prev => prev.filter(s => s.id !== supplementId));
   };
 
@@ -98,14 +98,24 @@ export default function DiaryDetailPage() {
         >
           <ArrowLeft size={20} className="text-text-soft" />
         </button>
-        <button
-          onClick={() => setShowDeleteConfirm(true)}
-          className="w-10 h-10 rounded-full bg-white/80 border border-red-200
-                     flex items-center justify-center hover:bg-red-50 transition-colors"
-          title="删除日记"
-        >
-          <Trash2 size={18} className="text-red-400" />
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setShowDeleteConfirm(true)}
+            className="w-10 h-10 rounded-full bg-white/80 border border-red-200
+                       flex items-center justify-center hover:bg-red-50 transition-colors"
+            title="删除日记"
+          >
+            <Trash2 size={18} className="text-red-400" />
+          </button>
+          <button
+            onClick={() => { signOut(); navigate('/login'); }}
+            className="w-10 h-10 rounded-full bg-white/80 border border-apricot/50
+                       flex items-center justify-center hover:bg-apricot/20 transition-colors"
+            title="退出登录"
+          >
+            <LogOut size={16} className="text-text-muted" />
+          </button>
+        </div>
       </div>
 
       {showDeleteConfirm && (
@@ -130,7 +140,7 @@ export default function DiaryDetailPage() {
         <span className="text-3xl">{moodCfg.emoji}</span>
         <span className="text-3xl">{weatherCfg.emoji}</span>
         <div className="flex-1" />
-        <span className="text-xs text-text-muted">{formatDateTime(entry.createdAt)}</span>
+        <span className="text-xs text-text-muted">{formatDateTime(entry.created_at)}</span>
       </div>
 
       <div className="flex items-center gap-2 mb-6">
@@ -192,7 +202,7 @@ export default function DiaryDetailPage() {
                 <span className="text-xs text-warmbrown bg-warmbrown/10 px-2 py-0.5 rounded-full">
                   后来添加
                 </span>
-                <span className="text-xs text-text-muted">{formatDateTime(s.createdAt)}</span>
+                <span className="text-xs text-text-muted">{formatDateTime(s.created_at)}</span>
               </div>
             </div>
           ))}
