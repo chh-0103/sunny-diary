@@ -1,0 +1,93 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-family: "Noto Sans SC", sans-serif;
+    background-color: #FFF8F0;
+    color: #6B5E52;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  ::selection {
+    background-color: rgba(232, 146, 124, 0.3);
+    color: #6B5E52;
+  }
+
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #E0D5C7;
+    border-radius: 3px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #C49A6C;
+  }
+}
+
+@layer components {
+  .page-container {
+    @apply max-w-[640px] mx-auto px-5 py-6 min-h-screen;
+  }
+
+  .card {
+    @apply bg-white rounded-3xl shadow-sm border border-apricot/40 p-5;
+  }
+
+  .btn-primary {
+    @apply bg-coral text-white rounded-2xl px-6 py-3 font-medium
+           shadow-md shadow-coral/20 transition-all duration-300
+           hover:shadow-lg hover:shadow-coral/30 hover:-translate-y-0.5
+           active:translate-y-0 active:shadow-md;
+  }
+
+  .btn-ghost {
+    @apply bg-white/80 text-text-soft rounded-2xl px-5 py-2.5 font-medium
+           border border-apricot/50 transition-all duration-300
+           hover:bg-apricot/30 hover:border-warmbrown/30;
+  }
+
+  .pill {
+    @apply rounded-full px-4 py-2 text-sm font-medium transition-all duration-300
+           border border-apricot/50 bg-white/60 text-text-muted cursor-pointer
+           hover:bg-apricot/30;
+  }
+
+  .pill-active {
+    @apply bg-warmbrown/15 border-warmbrown/50 text-warmbrown;
+  }
+
+  .supplement-block {
+    @apply bg-apricot/30 rounded-2xl p-4 border-l-4 border-warmbrown ml-2
+           relative animate-slide-up;
+  }
+
+  .page-transition-enter {
+    animation: fadeIn 0.35s ease-out forwards;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
