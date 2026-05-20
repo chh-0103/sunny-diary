@@ -7,7 +7,7 @@ export default function LoginPage() {
   const { signIn, sendOtp, verifyOtp } = useAuth();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const defaultTab = searchParams.get('mode') === 'password' ? 'password' : 'otp';
+  const defaultTab = searchParams.get('mode') === 'otp' ? 'otp' : 'password';
 
   const [tab, setTab] = useState<'otp' | 'password'>(defaultTab as 'otp' | 'password');
   const [email, setEmail] = useState('');
@@ -96,20 +96,20 @@ export default function LoginPage() {
 
         <div className="flex mb-5 bg-white/60 rounded-2xl p-1">
           <button
-            onClick={() => switchTab('otp')}
-            className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-sm font-medium transition-all
-              ${tab === 'otp' ? 'bg-white shadow-sm text-warmbrown' : 'text-text-muted'}`}
-          >
-            <Mail size={16} />
-            验证码登录
-          </button>
-          <button
             onClick={() => switchTab('password')}
             className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-sm font-medium transition-all
               ${tab === 'password' ? 'bg-white shadow-sm text-warmbrown' : 'text-text-muted'}`}
           >
             <Key size={16} />
             密码登录
+          </button>
+          <button
+            onClick={() => switchTab('otp')}
+            className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-sm font-medium transition-all
+              ${tab === 'otp' ? 'bg-white shadow-sm text-warmbrown' : 'text-text-muted'}`}
+          >
+            <Mail size={16} />
+            验证码登录
           </button>
         </div>
 
