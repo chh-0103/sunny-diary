@@ -1,6 +1,6 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { Heart, Mail, Key } from 'lucide-react';
+import { Heart, Mail, Key, Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 
 export default function LoginPage() {
@@ -33,6 +33,51 @@ export default function LoginPage() {
     }
     return () => clearInterval(timerRef.current);
   }, [countdown > 0]);
+
+  const [showPassword, setShowPassword] = useState(false);
+  const lastCharTimeRef = useRef<number>(0);
+  const prevDisplayRef = useRef('');
+  const passwordInputRef = useRef<HTMLInputElement>(null);
+  const [, setTick] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => setTick(t => t + 1), 250);
+    return () => clearInterval(timer);
+  }, []);
+
+  const getMaskedPassword = useCallback(() => {
+    if (showPassword) return password;
+    if (!password) return '';
+    const now = Date.now();
+    return password.split('').map((c, i) => {
+      if (i === password.length - 1 && now - lastCharTimeRef.current < 3000) return c;
+      return '•';
+    }).join('');
+  }, [password, showPassword]);
+
+  const displayPassword = getMaskedPassword();
+
+  useEffect(() => {
+    prevDisplayRef.current = displayPassword;
+  }, [displayPassword]);
+
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = e.target.value;
+    const oldValue = prevDisplayRef.current;
+
+    if (newValue.length > oldValue.length) {
+      const diff = newValue.length - oldValue.length;
+      const added = newValue.slice(-diff);
+      const realChars = added.replace(/•/g, '');
+      if (realChars) {
+        setPassword(p => p + realChars);
+        lastCharTimeRef.current = Date.now();
+      }
+    } else if (newValue.length < oldValue.length) {
+      const removed = oldValue.length - newValue.length;
+      setPassword(p => p.slice(0, Math.max(0, p.length - removed)));
+    }
+  };
 
   const handleSendCode = async () => {
     if (!email.trim() || countdown > 0) return;
@@ -196,17 +241,29 @@ export default function LoginPage() {
             </div>
             <div>
               <label className="block text-sm font-medium text-text-soft mb-1.5">密码</label>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="请输入密码"
-                required
-                minLength={6}
-                className="w-full rounded-2xl border border-apricot/50 bg-white/80 px-4 py-3
-                           text-text-soft placeholder:text-text-muted/50
-                           focus:outline-none focus:border-warmbrown/50 transition-all"
-              />
+              <div className="relative">
+                <input
+                  ref={passwordInputRef}
+                  type="text"
+                  value={displayPassword}
+                  onChange={handlePasswordChange}
+                  placeholder="请输入密码"
+                  required
+                  autoComplete="off"
+                  className="w-full rounded-2xl border border-apricot/50 bg-white/80 pl-4 pr-12 py-3
+                             text-text-soft placeholder:text-text-muted/50 tracking-[0.15em]
+                             focus:outline-none focus:border-warmbrown/50 transition-all"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted
+                             hover:text-warmbrown transition-colors p-1"
+                  tabIndex={-1}
+                >
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              </div>
             </div>
 
             {error && <p className="text-red-400 text-sm text-center">{error}</p>}
