@@ -147,10 +147,10 @@ export default function LoginPage() {
                 <input
                   type="text"
                   inputMode="numeric"
-                  maxLength={6}
+                  maxLength={8}
                   value={code}
-                  onChange={(e) => setCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
-                  placeholder="请输入6位验证码"
+                  onChange={(e) => setCode(e.target.value.replace(/\D/g, '').slice(0, 8))}
+                  placeholder="请输入8位验证码"
                   required
                   autoFocus
                   className="w-full rounded-2xl border border-apricot/50 bg-white/80 px-4 py-3
