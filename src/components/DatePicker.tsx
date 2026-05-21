@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react';
 
 const MONTHS = ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'];
 const DAYS = ['日', '一', '二', '三', '四', '五', '六'];
@@ -47,6 +47,9 @@ export default function DatePicker({ value, onChange }: DatePickerProps) {
   const today = new Date();
   const todayStr = toDateStr(today.getFullYear(), today.getMonth(), today.getDate());
 
+  const goPrevYear = () => setViewYear(viewYear - 1);
+  const goNextYear = () => setViewYear(viewYear + 1);
+
   const goPrevMonth = () => {
     if (viewMonth === 0) { setViewMonth(11); setViewYear(viewYear - 1); }
     else setViewMonth(viewMonth - 1);
@@ -79,16 +82,24 @@ export default function DatePicker({ value, onChange }: DatePickerProps) {
       {open && (
         <div className="absolute top-full left-0 mt-1 bg-white rounded-2xl shadow-xl border border-apricot/30 p-4 z-50 w-[280px]">
           <div className="flex items-center justify-between mb-3">
+            <button onClick={goPrevYear}
+              className="p-1 rounded-lg hover:bg-apricot/20 transition-colors" title="上一年">
+              <ChevronsLeft size={18} className="text-warmbrown" />
+            </button>
             <button onClick={goPrevMonth}
-              className="p-1 rounded-lg hover:bg-apricot/20 transition-colors">
+              className="p-1 rounded-lg hover:bg-apricot/20 transition-colors" title="上一月">
               <ChevronLeft size={18} className="text-warmbrown" />
             </button>
-            <span className="text-sm font-medium text-text-soft">
+            <span className="text-sm font-medium text-text-soft min-w-[90px] text-center">
               {viewYear}年 {MONTHS[viewMonth]}
             </span>
             <button onClick={goNextMonth}
-              className="p-1 rounded-lg hover:bg-apricot/20 transition-colors">
+              className="p-1 rounded-lg hover:bg-apricot/20 transition-colors" title="下一月">
               <ChevronRight size={18} className="text-warmbrown" />
+            </button>
+            <button onClick={goNextYear}
+              className="p-1 rounded-lg hover:bg-apricot/20 transition-colors" title="下一年">
+              <ChevronsRight size={18} className="text-warmbrown" />
             </button>
           </div>
 
