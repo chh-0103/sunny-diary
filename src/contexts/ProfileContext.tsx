@@ -102,8 +102,7 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
 
     const { error } = await supabase
       .from('user_profiles')
-      .update(updates)
-      .eq('user_id', user.id);
+      .upsert({ user_id: user.id, ...updates }, { onConflict: 'user_id' });
 
     if (error) {
       console.error('updateProfile error:', error);
