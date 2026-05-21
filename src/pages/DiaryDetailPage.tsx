@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Send, Camera, Trash2, LogOut } from 'lucide-react';
+import { ArrowLeft, Send, Camera, Trash2 } from 'lucide-react';
 import { useDiaryStore } from '@/store';
 import { useAuth } from '@/contexts/AuthContext';
 import { MOOD_CONFIG, WEATHER_CONFIG } from '@/types';
@@ -21,7 +21,7 @@ export default function DiaryDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { entries, loadEntries, addSupplement, deleteSupplement, deleteEntry } = useDiaryStore();
-  const { user, signOut } = useAuth();
+  const { user } = useAuth();
 
   const [entry, setEntry] = useState<DiaryEntry | null>(null);
   const [supplementText, setSupplementText] = useState('');
@@ -102,14 +102,6 @@ export default function DiaryDetailPage() {
             title="删除日记"
           >
             <Trash2 size={18} className="text-red-400" />
-          </button>
-          <button
-            onClick={() => { signOut(); navigate('/login'); }}
-            className="w-10 h-10 rounded-full bg-white/80 border border-apricot/50
-                       flex items-center justify-center hover:bg-apricot/20 transition-colors"
-            title="退出登录"
-          >
-            <LogOut size={16} className="text-text-muted" />
           </button>
         </div>
       </div>
@@ -195,9 +187,6 @@ export default function DiaryDetailPage() {
                 </button>
               </div>
               <div className="flex items-center gap-2 mt-2">
-                <span className="text-xs text-warmbrown bg-warmbrown/10 px-2 py-0.5 rounded-full">
-                  后来添加
-                </span>
                 <span className="text-xs text-text-muted">{formatDateTime(s.created_at)}</span>
               </div>
             </div>
@@ -205,7 +194,7 @@ export default function DiaryDetailPage() {
         </div>
       )}
 
-      <div className="fixed bottom-0 left-0 right-0 bg-cream/90 backdrop-blur-sm border-t border-apricot/30 p-4 z-30">
+      <div className="fixed bottom-0 left-0 right-0 bg-cream/90 backdrop-blur-sm border-t border-apricot/30 p-4 z-50">
         <div className="max-w-[640px] mx-auto flex gap-3">
           <input
             value={supplementText}

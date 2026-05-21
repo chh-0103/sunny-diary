@@ -21,6 +21,17 @@ export default function FilterBar({
 
   return (
     <div className="animate-slide-up space-y-3" style={{ animationDelay: '0.1s' }}>
+      <div className="flex items-center gap-2">
+        <span className="text-xs font-medium text-text-soft bg-apricot/40 px-2 py-0.5 rounded-full whitespace-nowrap">筛选</span>
+        {hasFilter && (
+          <button
+            onClick={onClear}
+            className="flex items-center gap-1 text-xs text-coral hover:text-coral/70 transition-colors"
+          >
+            <X size={12} /> 清除
+          </button>
+        )}
+      </div>
       <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-hide">
         <span className="text-xs text-text-muted whitespace-nowrap mr-1">心情</span>
         {MOOD_OPTIONS.map((mood) => (
@@ -46,15 +57,6 @@ export default function FilterBar({
           </button>
         ))}
       </div>
-
-      {hasFilter && (
-        <button
-          onClick={onClear}
-          className="flex items-center gap-1 text-xs text-coral hover:text-coral/70 transition-colors"
-        >
-          <X size={12} /> 清除筛选
-        </button>
-      )}
     </div>
   );
 }

@@ -9,14 +9,26 @@
     box-sizing: border-box;
   }
 
+  :root {
+    --bg: #FFF8F0;
+    --card: #FFFFFF;
+    --accent: #F5E6D3;
+    --primary: #E8927C;
+    --primary-light: #F2C4B8;
+    --secondary: #C49A6C;
+    --text: #6B5E52;
+    --text-muted: #A3968A;
+    --border: #F5E6D3;
+  }
+
   html {
     scroll-behavior: smooth;
   }
 
   body {
     font-family: "Noto Sans SC", sans-serif;
-    background-color: #FFF8F0;
-    color: #6B5E52;
+    background-color: var(--bg);
+    color: var(--text);
     min-height: 100vh;
     overflow-x: hidden;
   }
@@ -46,11 +58,25 @@
 
 @layer components {
   .page-container {
-    @apply max-w-[640px] mx-auto px-5 py-6 min-h-screen;
+    @apply w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 min-h-screen;
   }
 
   .card {
     @apply bg-white rounded-3xl shadow-sm border border-apricot/40 p-5;
+  }
+
+  .nav-bar {
+    @apply fixed bottom-0 left-0 right-0 bg-cream/95 backdrop-blur-sm border-t border-apricot/30
+           flex items-center justify-around py-2 px-4 z-50;
+  }
+
+  .nav-item {
+    @apply flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-2xl text-text-muted
+           transition-all duration-200 text-xs font-medium;
+  }
+
+  .nav-item-active {
+    @apply text-coral bg-coral/10;
   }
 
   .btn-primary {

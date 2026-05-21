@@ -1,16 +1,17 @@
 import { useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Plus, LogOut } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import { useDiaryStore } from '@/store';
 import { useAuth } from '@/contexts/AuthContext';
 import WelcomeBanner from '@/components/WelcomeBanner';
 import FilterBar from '@/components/FilterBar';
 import DiaryCard from '@/components/DiaryCard';
 import EmptyState from '@/components/EmptyState';
+import BottomNav from '@/components/BottomNav';
 
 export default function TimelinePage() {
   const navigate = useNavigate();
-  const { user, signOut } = useAuth();
+  const { user } = useAuth();
   const {
     entries, loading, filterMood, filterWeather,
     loadEntries, setFilterMood, setFilterWeather, clearFilters,
@@ -29,18 +30,8 @@ export default function TimelinePage() {
 
   return (
     <div className="page-container relative pb-28">
-      <div className="flex justify-end mb-2">
-        <div className="flex items-center gap-2">
-          <span className="text-xs text-text-muted hidden sm:block">{user?.email}</span>
-          <button
-            onClick={() => { signOut(); navigate('/login'); }}
-            className="w-8 h-8 rounded-full bg-white/80 border border-apricot/50
-                       flex items-center justify-center hover:bg-apricot/20 transition-colors"
-            title="退出登录"
-          >
-            <LogOut size={14} className="text-text-muted" />
-          </button>
-        </div>
+      <div className="flex items-center justify-between mb-2">
+        <span className="text-xs text-text-muted hidden sm:block">{user?.email}</span>
       </div>
 
       <WelcomeBanner />
@@ -58,8 +49,8 @@ export default function TimelinePage() {
       )}
 
       {loading ? (
-        <div className="space-y-4">
-          {[1, 2, 3].map((i) => (
+        <div className="grid gap-4 lg:grid-cols-2">
+          {[1, 2, 3, 4].map((i) => (
             <div key={i} className="card animate-pulse">
               <div className="flex gap-2 mb-3">
                 <div className="w-10 h-10 rounded-full bg-apricot/40" />
@@ -80,16 +71,21 @@ export default function TimelinePage() {
           </button>
         </div>
       ) : (
-        <div className="space-y-4">
-          {filteredEntries.map((entry, i) => (
-            <DiaryCard key={entry.id} entry={entry} index={i} />
-          ))}
-        </div>
+        <>
+          <div className="flex items-center gap-2 mb-4">
+            <span className="text-xs font-medium text-text-soft bg-apricot/40 px-2 py-0.5 rounded-full">心晴印记</span>
+          </div>
+          <div className="grid gap-4 lg:grid-cols-2">
+            {filteredEntries.map((entry, i) => (
+              <DiaryCard key={entry.id} entry={entry} index={i} />
+            ))}
+          </div>
+        </>
       )}
 
       <button
         onClick={() => navigate('/new')}
-        className="fixed bottom-8 right-8 w-14 h-14 rounded-full bg-coral text-white
+        className="fixed bottom-24 right-8 w-14 h-14 rounded-full bg-coral text-white
                    flex items-center justify-center shadow-lg shadow-coral/30
                    hover:shadow-xl hover:shadow-coral/40 hover:-translate-y-1
                    active:translate-y-0 transition-all duration-300 z-40
@@ -98,6 +94,8 @@ export default function TimelinePage() {
       >
         <Plus size={28} />
       </button>
+
+      <BottomNav />
     </div>
   );
 }
